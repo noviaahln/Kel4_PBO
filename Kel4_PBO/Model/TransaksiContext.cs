@@ -8,9 +8,9 @@ using System.Transactions;
 
 namespace Kel4_PBO.Model
 {
-    public class RepositoryTransaksi
+    public class TransaksiContext
     {
-        private string connectionString = "Server=localhost;Port=5432;Database=kinkapp;User Id=postgres;password=lmj#191104";
+        private string connectionString = "Host=localhost;Port=5432;Database=kinkapp;Username=postgres;Password=lmj#191104";
 
         public List<Transaksi> GetAll()
         {
@@ -18,16 +18,17 @@ namespace Kel4_PBO.Model
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                var command = new NpgsqlCommand("SELECT * FROM Transaksi", connection);
+                var command = new NpgsqlCommand("SELECT t.id_transaksi, b.nama_barang, b.harga_jual, dt.jumlah, dt.total_harga FROM detail_transaksi dt JOIN barang b on (b.id_barang = dt.id_barang) JOIN transaksi t on (t.id_transaksi = dt.id_transaksi)", connection);
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     transaksi.Add(new Transaksi
                     {
                         id_transaksi= (string)reader["id_transaksi"],
-                        id_karyawan = (string)reader["id_karyawan"],
-                        total_transaksi = (int)reader["Date"],
-                        tanggal = (DateTime)reader["Tanggal"]
+                        nama_barang = (string)reader["nama_karyawan"],
+                        harga_jual = (int)reader["harga_jual"],
+                        jumlah = (int)reader["jumlah"],
+                        total_harga = (int)reader["total_harga"]
                     });
                 }
             }
@@ -40,11 +41,13 @@ namespace Kel4_PBO.Model
             {
                 connection.Open();
                 var command = new NpgsqlCommand(
-                    "INSERT INTO Transaksi (id_karyawan, total_transaksi, tanggal) VALUES (@IdKaryawan, @TotalTransaksi, @Tanggal)",
+                    "INSERT INTO detail_transaksi (id_transaksi, nama_barang, harga_jual, jumlah, total_harga) VALUES (@IdTransaksi, @NamaBarang, @HargaJual, @Jumlah, @TotalHarga)",
                     connection);
-                command.Parameters.AddWithValue("@IdKaryawan", transaksi.id_karyawan);
-                command.Parameters.AddWithValue("@TotalTransaksi", transaksi.total_transaksi);
-                command.Parameters.AddWithValue("@Tanggal", transaksi.tanggal);
+                command.Parameters.AddWithValue("@IdTransaksi", transaksi.id_transaksi);
+                command.Parameters.AddWithValue("@NamaBarang", transaksi.nama_barang);
+                command.Parameters.AddWithValue("@HargaJual", transaksi.harga_jual);
+                command.Parameters.AddWithValue("@Jumlah", transaksi.jumlah);
+                command.Parameters.AddWithValue("@TotalHarga", transaksi.total_harga);
                 command.ExecuteNonQuery();
             }
         }

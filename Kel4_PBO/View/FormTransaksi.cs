@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kel4_PBO.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -45,6 +46,50 @@ namespace Kel4_PBO.View
         private void panelLogo_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void guna2Shapes1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void IDBarang_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbHarga_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string idTransaksi = txtIdTransaksi.Text; 
+                string namaBarang = NamaBarang.Text;
+                int hargaJual = int.Parse(HargaJual.Text); 
+                int jumlah = int.Parse(Jumlah.Text);
+                int totalHarga = int.Parse(TotalHarga.Text); 
+
+                var transaksi = new Transaksi
+                {
+                    id_transaksi = idTransaksi,
+                    nama_barang = namaBarang,
+                    harga_jual = hargaJual,
+                    jumlah = jumlah,
+                    total_harga = totalHarga
+                };
+                var repository = new TransaksiContext();
+                repository.Add(transaksi);
+
+                MessageBox.Show("Transaksi berhasil ditambahkan");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Gagal: {ex.Message}");
+            }
         }
     }
 }
